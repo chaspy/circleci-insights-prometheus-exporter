@@ -10,6 +10,7 @@ import (
 
 func main() {
 	getV2WorkflowInsights()
+//	getV2InsightWorkflowJob()
 }
 
 func getV2WorkflowInsights() {
@@ -37,6 +38,11 @@ func getV2WorkflowInsights() {
 	//	fmt.Println(res)
 	fmt.Println(string(body))
 }
+
+//func getV2InsightWorkflowJob(){
+	// not implemented
+//	fmt.Println("Hello insight workflow job")
+//}
 
 func getCircleCIToken() (string, error) {
 	circleciToken := os.Getenv("CIRCLECI_TOKEN")
