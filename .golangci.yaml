@@ -1,0 +1,15 @@
+---
+linters:
+  enable-all: true
+  disable:
+  - wsl
+  - goerr113
+  - lll
+  - godot
+  - godox
+  - golint
+  - gofumpt
+  - testpackage
+  - nlreturn
+  - exhaustivestruct
+  - scopelint
