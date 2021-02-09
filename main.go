@@ -9,6 +9,10 @@ import (
 )
 
 func main() {
+	getV2WorkflowInsights()
+}
+
+func getV2WorkflowInsights(){
 	branch := "develop"
 	reportingWingow := "last-7-days"
 
@@ -28,9 +32,8 @@ func main() {
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 
-//	fmt.Println(res)
+	//	fmt.Println(res)
 	fmt.Println(string(body))
-
 }
 
 func getCircleCIToken() (string,error) {
