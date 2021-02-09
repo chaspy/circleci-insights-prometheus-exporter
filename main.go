@@ -12,7 +12,7 @@ func main() {
 	getV2WorkflowInsights()
 }
 
-func getV2WorkflowInsights(){
+func getV2WorkflowInsights() {
 	branch := "develop"
 	reportingWingow := "last-7-days"
 	org := "quipper"
@@ -23,7 +23,7 @@ func getV2WorkflowInsights(){
 		log.Fatal("failed to read Datadog Config: %w", err)
 	}
 
-	url := "https://circleci.com/api/v2/insights/gh/"+org+"/"+repo+"/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
+	url := "https://circleci.com/api/v2/insights/gh/" + org + "/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
 
 	req, _ := http.NewRequest("GET", url, nil)
 
@@ -38,10 +38,10 @@ func getV2WorkflowInsights(){
 	fmt.Println(string(body))
 }
 
-func getCircleCIToken() (string,error) {
+func getCircleCIToken() (string, error) {
 	circleciToken := os.Getenv("CIRCLECI_TOKEN")
 	if len(circleciToken) == 0 {
-		return "",fmt.Errorf("missing environment variable CIRCLECI_TOKEN")
+		return "", fmt.Errorf("missing environment variable CIRCLECI_TOKEN")
 	}
 
 	return circleciToken, nil
