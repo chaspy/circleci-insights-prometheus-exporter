@@ -15,13 +15,15 @@ func main() {
 func getV2WorkflowInsights(){
 	branch := "develop"
 	reportingWingow := "last-7-days"
+	org := "quipper"
+	repo := "monorepo"
 
 	getCircleCIToken, err := getCircleCIToken()
 	if err != nil {
 		log.Fatal("failed to read Datadog Config: %w", err)
 	}
 
-	url := "https://circleci.com/api/v2/insights/gh/quipper/monorepo/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
+	url := "https://circleci.com/api/v2/insights/gh/"+org+"/"+repo+"/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
 
 	req, _ := http.NewRequest("GET", url, nil)
 
