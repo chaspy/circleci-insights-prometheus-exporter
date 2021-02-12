@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,28 +17,33 @@ func main() {
 
 func getV2WorkflowInsights() {
 	type WorkflowInsight struct {
+		NextPageToken interface{} `json:"next_page_token"`
+		Items         []struct {
 		Name    string `json:"name"`
 		Metrics struct {
-			TotalRuns        int     `json:"total_runs"`
-			SuccessfulRuns   int     `json:"successful_runs"`
-			Mttr             int     `json:"mttr"`
-			TotalCreditsUsed int     `json:"total_credits_used"`
-			FailedRuns       int     `json:"failed_runs"`
-			SuccessRate      float64 `json:"success_rate"`
-			DurationMetrics  struct {
-				Min               int     `json:"min"`
-				Max               int     `json:"max"`
-				Median            int     `json:"median"`
-				Mean              int     `json:"mean"`
-				P95               int     `json:"p95"`
-				StandardDeviation float64 `json:"standard_deviation"`
-			} `json:"duration_metrics"`
-			TotalRecoveries int     `json:"total_recoveries"`
-			Throughput      float64 `json:"throughput"`
-		} `json:"metrics"`
+		TotalRuns        int     `json:"total_runs"`
+		SuccessfulRuns   int     `json:"successful_runs"`
+		Mttr             int     `json:"mttr"`
+		TotalCreditsUsed int     `json:"total_credits_used"`
+		FailedRuns       int     `json:"failed_runs"`
+		SuccessRate      float64 `json:"success_rate"`
+		DurationMetrics  struct {
+		Min               int     `json:"min"`
+		Max               int     `json:"max"`
+		Median            int     `json:"median"`
+		Mean              int     `json:"mean"`
+		P95               int     `json:"p95"`
+		StandardDeviation float64 `json:"standard_deviation"`
+	} `json:"duration_metrics"`
+		TotalRecoveries int     `json:"total_recoveries"`
+		Throughput      float64 `json:"throughput"`
+	} `json:"metrics"`
 		WindowStart time.Time `json:"window_start"`
 		WindowEnd   time.Time `json:"window_end"`
+	} `json:"items"`
 	}
+
+	var m WorkflowInsight
 
 	branch := "develop"
 	reportingWingow := "last-7-days"
@@ -65,8 +71,8 @@ func getV2WorkflowInsights() {
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 
-	//	fmt.Println(res)
-	fmt.Println(string(body))
+	err = json.Unmarshal(body, &m)
+	fmt.Printf("%+v\n",m)
 }
 
 //func getV2InsightWorkflowJob(){
