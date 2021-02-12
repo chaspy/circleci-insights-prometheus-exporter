@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "managers": ["gomod"],
+      "packagePatterns": [".*"],
+      "updateTypes": ["major"],
+      "postUpdateOptions": [
+        "gomodTidy"
+      ]
+    },
+    {
+      "managers": ["gomod"],
+      "packagePatterns": [".*"],
+      "updateTypes": ["minor", "patch", "pin"],
+      "automerge": true,
+      "postUpdateOptions": [
+        "gomodTidy"
+      ]
+    }
+  ]
+}
