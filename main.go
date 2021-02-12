@@ -3,14 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -109,7 +110,7 @@ func getInterval() (int, error) {
 	return integerCircleCIAPIInterval, nil
 }
 
-func getV2WorkflowInsights() (WorkflowInsight,error){
+func getV2WorkflowInsights() (WorkflowInsight, error) {
 	var wfInsight WorkflowInsight
 
 	branch := "develop"
@@ -140,16 +141,16 @@ func getV2WorkflowInsights() (WorkflowInsight,error){
 
 	err = json.Unmarshal(body, &wfInsight)
 	if err != nil {
-		return WorkflowInsight{},fmt.Errorf("failed to parse response body: %w", err)
+		return WorkflowInsight{}, fmt.Errorf("failed to parse response body: %w", err)
 	}
 
-	fmt.Printf("%+v\n",wfInsight)
+	fmt.Printf("%+v\n", wfInsight)
 
-	return wfInsight,nil
+	return wfInsight, nil
 }
 
 //func getV2InsightWorkflowJob(){
-	// not implemented
+// not implemented
 //	fmt.Println("Hello insight workflow job")
 //}
 
