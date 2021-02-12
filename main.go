@@ -14,13 +14,53 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+//nolint:gochecknoglobals
 var (
-	//nolint:gochecknoglobals
 	successRate = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
 		Subsystem: "workflow_insight",
 		Name:      "success_rate",
 		Help:      "success rate of workflow",
+	},
+		[]string{"name"},
+	)
+	durationMetricsMin = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insight",
+		Name:      "duration_metrics_min",
+		Help:      "minimum duration metrics",
+	},
+		[]string{"name"},
+	)
+	durationMetricsMax = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insight",
+		Name:      "duration_metrics_max",
+		Help:      "maximum duration metrics",
+	},
+		[]string{"name"},
+	)
+	durationMetricsMedian = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insight",
+		Name:      "duration_metrics_median",
+		Help:      "median of duration metrics",
+	},
+		[]string{"name"},
+	)
+	durationMetricsP95 = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insight",
+		Name:      "duration_metrics_p95",
+		Help:      "95 percentile of duration metrics",
+	},
+		[]string{"name"},
+	)
+	durationMetricsStandardDeviation = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insight",
+		Name:      "duration_metrics_standard_deviation",
+		Help:      "standard deviation of duration metrics",
 	},
 		[]string{"name"},
 	)
@@ -60,6 +100,11 @@ func main() {
 	}
 
 	prometheus.MustRegister(successRate)
+	prometheus.MustRegister(durationMetricsMin)
+	prometheus.MustRegister(durationMetricsMax)
+	prometheus.MustRegister(durationMetricsMedian)
+	prometheus.MustRegister(durationMetricsP95)
+	prometheus.MustRegister(durationMetricsStandardDeviation)
 
 	http.Handle("/metrics", promhttp.Handler())
 
@@ -79,6 +124,11 @@ func main() {
 
 func snapshot() error {
 	successRate.Reset()
+	durationMetricsMin.Reset()
+	durationMetricsMax.Reset()
+	durationMetricsMedian.Reset()
+	durationMetricsP95.Reset()
+	durationMetricsStandardDeviation.Reset()
 
 	wfInsight, err := getV2WorkflowInsights()
 	if err != nil {
@@ -90,6 +140,11 @@ func snapshot() error {
 			"name": item.Name,
 		}
 		successRate.With(labels).Set(item.Metrics.SuccessRate)
+		durationMetricsMin.With(labels).Set(float64(item.Metrics.DurationMetrics.Min))
+		durationMetricsMax.With(labels).Set(float64(item.Metrics.DurationMetrics.Max))
+		durationMetricsMedian.With(labels).Set(float64(item.Metrics.DurationMetrics.Median))
+		durationMetricsP95.With(labels).Set(float64(item.Metrics.DurationMetrics.P95))
+		durationMetricsStandardDeviation.With(labels).Set(item.Metrics.DurationMetrics.StandardDeviation)
 	}
 
 	return nil
