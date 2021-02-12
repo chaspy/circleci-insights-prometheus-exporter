@@ -24,6 +24,11 @@ func getV2WorkflowInsights() {
 		log.Fatal("failed to read Datadog Config: %w", err)
 	}
 
+	// TODO: pagination
+	// if next_page_token is nil, break.
+	// otherwise, set the token to "page-token" query parameter
+	// ref: https://circleci.com/docs/api/v2/?utm_medium=SEM&utm_source=gnb&utm_campaign=SEM-gb-DSA-Eng-japac&utm_content=&utm_term=dynamicSearch-&gclid=CjwKCAiA65iBBhB-EiwAW253W3odzDASJ4KM0jAwNejVKqmjFz5a_74x8oIGy5jGm_MUZkhqnmtFkhoC7QIQAvD_BwE#operation/getProjectWorkflowMetrics
+
 	url := "https://circleci.com/api/v2/insights/gh/" + org + "/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
 
 	req, _ := http.NewRequest("GET", url, nil)
