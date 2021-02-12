@@ -199,8 +199,6 @@ func getV2WorkflowInsights() (WorkflowInsight, error) {
 		return WorkflowInsight{}, fmt.Errorf("failed to parse response body: %w", err)
 	}
 
-	fmt.Printf("%+v\n", wfInsight)
-
 	return wfInsight, nil
 }
 
