@@ -204,11 +204,6 @@ func getV2WorkflowInsights() (WorkflowInsight, error) {
 	return wfInsight, nil
 }
 
-//func getV2InsightWorkflowJob(){
-// not implemented
-//	fmt.Println("Hello insight workflow job")
-//}
-
 func getCircleCIToken() (string, error) {
 	circleciToken := os.Getenv("CIRCLECI_TOKEN")
 	if len(circleciToken) == 0 {
