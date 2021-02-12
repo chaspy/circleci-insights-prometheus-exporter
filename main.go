@@ -110,7 +110,7 @@ func getInterval() (int, error) {
 }
 
 func getV2WorkflowInsights() (WorkflowInsight,error){
-	var m WorkflowInsight
+	var wfInsight WorkflowInsight
 
 	branch := "develop"
 	reportingWingow := "last-7-days"
@@ -138,14 +138,14 @@ func getV2WorkflowInsights() (WorkflowInsight,error){
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 
-	err = json.Unmarshal(body, &m)
+	err = json.Unmarshal(body, &wfInsight)
 	if err != nil {
 		return WorkflowInsight{},fmt.Errorf("failed to parse response body: %w", err)
 	}
 
-	fmt.Printf("%+v\n",m)
+	fmt.Printf("%+v\n",wfInsight)
 
-	return m,nil
+	return wfInsight,nil
 }
 
 //func getV2InsightWorkflowJob(){
