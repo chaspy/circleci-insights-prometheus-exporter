@@ -181,7 +181,7 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 	var wfInsight WorkflowInsight
 	var wfInsightWithRepos []WorkflowInsightWithRepo
 
-	reportingWingow := "last-7-days"
+	reportingWindow := getReportingWindow()
 	repos, err := getGitHubRepos()
 	branches, err := getGitHubBranches()
 
@@ -198,7 +198,7 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 			// otherwise, set the token to "page-token" query parameter
 			// ref: https://circleci.com/docs/api/v2/?utm_medium=SEM&utm_source=gnb&utm_campaign=SEM-gb-DSA-Eng-japac&utm_content=&utm_term=dynamicSearch-&gclid=CjwKCAiA65iBBhB-EiwAW253W3odzDASJ4KM0jAwNejVKqmjFz5a_74x8oIGy5jGm_MUZkhqnmtFkhoC7QIQAvD_BwE#operation/getProjectWorkflowMetrics
 
-			url := "https://circleci.com/api/v2/insights/gh/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
+			url := "https://circleci.com/api/v2/insights/gh/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWindow
 
 			ctx := context.Background()
 			req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
@@ -253,4 +253,17 @@ func getGitHubBranches() ([]string, error) {
 	}
 	ret := strings.Split(githubBranches, ",")
 	return ret, nil
+}
+
+// reporting window expect the followings:
+// "last-7-days" "last-90-days" "last-24-hours" "last-30-days" "last-60-days"
+// ref:https://circleci.com/docs/api/v2/#tag/Insights
+func getReportingWindow() string {
+	defaultReportingWindow := "last-7-days"
+	reportingWindow := os.Getenv("REPORTING_WINDOW")
+	if len(reportingWindow) == 0 {
+		return defaultReportingWindow
+	}
+
+	return reportingWindow
 }
