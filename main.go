@@ -192,7 +192,6 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 
 	for _, repo := range repos {
 		for _, branch := range branches {
-			fmt.Printf("%v,%v\n", repo, branch)
 			// TODO: pagination
 			// if next_page_token is nil, break.
 			// otherwise, set the token to "page-token" query parameter
@@ -215,7 +214,7 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 			if err != nil {
 				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read response body: %w", err)
 			}
-			fmt.Println(string(body))
+
 			err = json.Unmarshal(body, &wfInsight)
 			if err != nil {
 				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to parse response body: %w", err)
