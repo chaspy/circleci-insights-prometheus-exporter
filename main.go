@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -185,7 +186,8 @@ func getV2WorkflowInsights() (WorkflowInsight, error) {
 
 	url := "https://circleci.com/api/v2/insights/gh/" + org + "/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWingow
 
-	req, _ := http.NewRequest("GET", url, nil)
+	ctx := context.Background()
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 
 	req.Header.Add("Circle-Token", getCircleCIToken)
 
