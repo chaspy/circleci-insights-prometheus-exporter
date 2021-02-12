@@ -132,7 +132,7 @@ func snapshot() error {
 
 	wfInsight, err := getV2WorkflowInsights()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to get workflow insights: %w", err)
 	}
 
 	for _, item := range wfInsight.Items {
