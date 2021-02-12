@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -23,42 +25,91 @@ var (
 	)
 )
 
-func main() {
-	err := getV2WorkflowInsights()
-	if err != nil {
-		log.Fatal(err)
-	}
-//	getV2InsightWorkflowJob()
-}
-
-func getV2WorkflowInsights() error{
-	type WorkflowInsight struct {
-		NextPageToken interface{} `json:"next_page_token"`
-		Items         []struct {
+type WorkflowInsight struct {
+	NextPageToken interface{} `json:"next_page_token"`
+	Items         []struct {
 		Name    string `json:"name"`
 		Metrics struct {
-		TotalRuns        int     `json:"total_runs"`
-		SuccessfulRuns   int     `json:"successful_runs"`
-		Mttr             int     `json:"mttr"`
-		TotalCreditsUsed int     `json:"total_credits_used"`
-		FailedRuns       int     `json:"failed_runs"`
-		SuccessRate      float64 `json:"success_rate"`
-		DurationMetrics  struct {
-		Min               int     `json:"min"`
-		Max               int     `json:"max"`
-		Median            int     `json:"median"`
-		Mean              int     `json:"mean"`
-		P95               int     `json:"p95"`
-		StandardDeviation float64 `json:"standard_deviation"`
-	} `json:"duration_metrics"`
-		TotalRecoveries int     `json:"total_recoveries"`
-		Throughput      float64 `json:"throughput"`
-	} `json:"metrics"`
+			TotalRuns        int     `json:"total_runs"`
+			SuccessfulRuns   int     `json:"successful_runs"`
+			Mttr             int     `json:"mttr"`
+			TotalCreditsUsed int     `json:"total_credits_used"`
+			FailedRuns       int     `json:"failed_runs"`
+			SuccessRate      float64 `json:"success_rate"`
+			DurationMetrics  struct {
+				Min               int     `json:"min"`
+				Max               int     `json:"max"`
+				Median            int     `json:"median"`
+				Mean              int     `json:"mean"`
+				P95               int     `json:"p95"`
+				StandardDeviation float64 `json:"standard_deviation"`
+			} `json:"duration_metrics"`
+			TotalRecoveries int     `json:"total_recoveries"`
+			Throughput      float64 `json:"throughput"`
+		} `json:"metrics"`
 		WindowStart time.Time `json:"window_start"`
 		WindowEnd   time.Time `json:"window_end"`
 	} `json:"items"`
+}
+
+func main() {
+	interval, err := getInterval()
+	if err != nil {
+		log.Fatal(err)
 	}
 
+	prometheus.MustRegister(successRate)
+
+	http.Handle("/metrics", promhttp.Handler())
+
+	go func() {
+		ticker := time.NewTicker(time.Duration(interval) * time.Second)
+
+		// register metrics as background
+		for range ticker.C {
+			err := snapshot()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}()
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func snapshot() error {
+	successRate.Reset()
+
+	wfInsight, err := getV2WorkflowInsights()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, item := range wfInsight.Items {
+		labels := prometheus.Labels{
+			"name": item.Name,
+		}
+		successRate.With(labels).Set(item.Metrics.SuccessRate)
+	}
+
+	return nil
+}
+
+func getInterval() (int, error) {
+	const defaultCircleCIAPIIntervalSecond = 300
+	circleciAPIInterval := os.Getenv("CIRCLECI_API_INTERVAL")
+	if len(circleciAPIInterval) == 0 {
+		return defaultCircleCIAPIIntervalSecond, nil
+	}
+
+	integerCircleCIAPIInterval, err := strconv.Atoi(circleciAPIInterval)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read CircleCI Config: %w", err)
+	}
+
+	return integerCircleCIAPIInterval, nil
+}
+
+func getV2WorkflowInsights() (WorkflowInsight,error){
 	var m WorkflowInsight
 
 	branch := "develop"
@@ -89,12 +140,12 @@ func getV2WorkflowInsights() error{
 
 	err = json.Unmarshal(body, &m)
 	if err != nil {
-		return fmt.Errorf("failed to parse response body: %w", err)
+		return WorkflowInsight{},fmt.Errorf("failed to parse response body: %w", err)
 	}
 
 	fmt.Printf("%+v\n",m)
 
-	return nil
+	return m,nil
 }
 
 //func getV2InsightWorkflowJob(){
