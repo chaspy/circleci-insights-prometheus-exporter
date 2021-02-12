@@ -11,11 +11,14 @@ import (
 )
 
 func main() {
-	getV2WorkflowInsights()
+	err := getV2WorkflowInsights()
+	if err != nil {
+		log.Fatal(err)
+	}
 //	getV2InsightWorkflowJob()
 }
 
-func getV2WorkflowInsights() {
+func getV2WorkflowInsights() error{
 	type WorkflowInsight struct {
 		NextPageToken interface{} `json:"next_page_token"`
 		Items         []struct {
@@ -72,7 +75,13 @@ func getV2WorkflowInsights() {
 	body, _ := ioutil.ReadAll(res.Body)
 
 	err = json.Unmarshal(body, &m)
+	if err != nil {
+		return fmt.Errorf("failed to parse response body: %w", err)
+	}
+
 	fmt.Printf("%+v\n",m)
+
+	return nil
 }
 
 //func getV2InsightWorkflowJob(){
