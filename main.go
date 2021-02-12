@@ -14,6 +14,24 @@ func main() {
 }
 
 func getV2WorkflowInsights() {
+	type workflowInsight struct{
+		name string
+		total_runs int64
+		successful_runs int64
+		mttr int64
+		total_credits_used int64
+		failed_runs int64
+		success_rate float64
+		duration_metrics_min int64
+		duration_metrics_max int64
+		duration_metrics_median int64
+		duration_metrics_mean int64
+		duration_metrics_p95 int64
+		duration_metrics_standard_deviation float64
+		total_recoveries int64
+		throughput float64
+	}
+
 	branch := "develop"
 	reportingWingow := "last-7-days"
 	org := "quipper"
