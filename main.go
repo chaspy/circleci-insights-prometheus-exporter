@@ -3,11 +3,24 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"time"
+)
+
+var (
+	//nolint:gochecknoglobals
+	successRate = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insight",
+		Name:      "success_rate",
+		Help:      "success rate of workflow",
+	},
+		[]string{"name"},
+	)
 )
 
 func main() {
