@@ -189,10 +189,16 @@ func getV2WorkflowInsights() (WorkflowInsight, error) {
 
 	req.Header.Add("Circle-Token", getCircleCIToken)
 
-	res, _ := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return WorkflowInsight{}, fmt.Errorf("failed to get response body: %w", err)
+	}
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return WorkflowInsight{}, fmt.Errorf("failed to read response body: %w", err)
+	}
 
 	err = json.Unmarshal(body, &wfInsight)
 	if err != nil {
