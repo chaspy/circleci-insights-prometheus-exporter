@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -14,22 +15,28 @@ func main() {
 }
 
 func getV2WorkflowInsights() {
-	type workflowInsight struct{
-		name string
-		total_runs int64
-		successful_runs int64
-		mttr int64
-		total_credits_used int64
-		failed_runs int64
-		success_rate float64
-		duration_metrics_min int64
-		duration_metrics_max int64
-		duration_metrics_median int64
-		duration_metrics_mean int64
-		duration_metrics_p95 int64
-		duration_metrics_standard_deviation float64
-		total_recoveries int64
-		throughput float64
+	type WorkflowInsight struct {
+		Name    string `json:"name"`
+		Metrics struct {
+			TotalRuns        int     `json:"total_runs"`
+			SuccessfulRuns   int     `json:"successful_runs"`
+			Mttr             int     `json:"mttr"`
+			TotalCreditsUsed int     `json:"total_credits_used"`
+			FailedRuns       int     `json:"failed_runs"`
+			SuccessRate      float64 `json:"success_rate"`
+			DurationMetrics  struct {
+				Min               int     `json:"min"`
+				Max               int     `json:"max"`
+				Median            int     `json:"median"`
+				Mean              int     `json:"mean"`
+				P95               int     `json:"p95"`
+				StandardDeviation float64 `json:"standard_deviation"`
+			} `json:"duration_metrics"`
+			TotalRecoveries int     `json:"total_recoveries"`
+			Throughput      float64 `json:"throughput"`
+		} `json:"metrics"`
+		WindowStart time.Time `json:"window_start"`
+		WindowEnd   time.Time `json:"window_end"`
 	}
 
 	branch := "develop"
