@@ -183,7 +183,14 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 
 	reportingWindow := getReportingWindow()
 	repos, err := getGitHubRepos()
+	if err != nil {
+		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read GitHub repository: %w", err)
+	}
+
 	branches, err := getGitHubBranches()
+	if err != nil {
+		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read GitHub branch: %w", err)
+	}
 
 	getCircleCIToken, err := getCircleCIToken()
 	if err != nil {
