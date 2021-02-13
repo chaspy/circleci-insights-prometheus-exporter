@@ -208,21 +208,14 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 
 				req.Header.Add("Circle-Token", getCircleCIToken)
 
-				res, err := http.DefaultClient.Do(req)
-				if err != nil {
-					return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to get response body: %w", err)
-				}
-
-				defer res.Body.Close()
-				body, err := ioutil.ReadAll(res.Body)
-
-				if res.StatusCode >= 300 { //nolint:gomnd
-					log.Printf("response status code is not 2xx. status code: %v body: %v. skip.\n", res.StatusCode, string(body))
-					break
+				body, status, err := getV2WorkflowInsightsAPI(req)
+				if status >= 300 { //nolint:gomnd
+					log.Printf("response status code is not 2xx. status code: %v body: %v. skip.\n", status, string(body))
+					return nil, nil
 				}
 
 				if err != nil {
-					return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read response body: %w", err)
+					return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to call API %w", err)
 				}
 
 				err = json.Unmarshal(body, &wfInsight)
@@ -243,6 +236,22 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 		}
 	}
 	return wfInsightWithRepos, nil
+}
+
+func getV2WorkflowInsightsAPI(req *http.Request) ([]byte, int, error) {
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to get response body: %w", err)
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	return body, res.StatusCode, nil
 }
 
 func getCircleCIToken() (string, error) {
