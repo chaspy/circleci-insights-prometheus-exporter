@@ -5,7 +5,7 @@ WORKDIR /go/src
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY ./main.go  ./
+COPY . .
 
 ARG CGO_ENABLED=0
 ARG GOOS=linux
