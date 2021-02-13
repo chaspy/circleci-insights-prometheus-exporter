@@ -75,7 +75,7 @@ type WorkflowInsightWithRepo struct {
 }
 
 type WorkflowInsight struct {
-	NextPageToken interface{} `json:"next_page_token"`
+	NextPageToken string `json:"next_page_token"`
 	Items         []struct {
 		Name    string `json:"name"`
 		Metrics struct {
@@ -180,6 +180,7 @@ func getInterval() (int, error) {
 func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 	var wfInsight WorkflowInsight
 	var wfInsightWithRepos []WorkflowInsightWithRepo
+	var pageToken string
 
 	reportingWindow := getReportingWindow()
 	repos, err := getGitHubRepos()
@@ -199,42 +200,46 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 
 	for _, repo := range repos {
 		for _, branch := range branches {
-			// TODO: pagination
-			// if next_page_token is nil, break.
-			// otherwise, set the token to "page-token" query parameter
-			// ref: https://circleci.com/docs/api/v2/?utm_medium=SEM&utm_source=gnb&utm_campaign=SEM-gb-DSA-Eng-japac&utm_content=&utm_term=dynamicSearch-&gclid=CjwKCAiA65iBBhB-EiwAW253W3odzDASJ4KM0jAwNejVKqmjFz5a_74x8oIGy5jGm_MUZkhqnmtFkhoC7QIQAvD_BwE#operation/getProjectWorkflowMetrics
+			for {
+				url := "https://circleci.com/api/v2/insights/gh/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWindow + "&page-token" + pageToken
 
-			url := "https://circleci.com/api/v2/insights/gh/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWindow
+				ctx := context.Background()
+				req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 
-			ctx := context.Background()
-			req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+				req.Header.Add("Circle-Token", getCircleCIToken)
 
-			req.Header.Add("Circle-Token", getCircleCIToken)
+				res, err := http.DefaultClient.Do(req)
+				if err != nil {
+					return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to get response body: %w", err)
+				}
 
-			res, err := http.DefaultClient.Do(req)
-			if err != nil {
-				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to get response body: %w", err)
+				defer res.Body.Close()
+				body, err := ioutil.ReadAll(res.Body)
+
+				if res.StatusCode >= 300 { //nolint:gomnd
+					log.Printf("response status code is not 2xx. status code: %v body: %v. skip.\n", res.StatusCode, string(body))
+					break
+				}
+
+				if err != nil {
+					return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read response body: %w", err)
+				}
+
+				err = json.Unmarshal(body, &wfInsight)
+				if err != nil {
+					return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to parse response body. body %v, err %w", string(body), err)
+				}
+
+				wfInsightWithRepo := WorkflowInsightWithRepo{repo: repo, branch: branch, WorkflowInsight: wfInsight}
+				wfInsightWithRepos = append(wfInsightWithRepos, wfInsightWithRepo)
+
+				// pagination
+				if wfInsight.NextPageToken == "" {
+					break
+				} else {
+					pageToken = wfInsight.NextPageToken
+				}
 			}
-
-			defer res.Body.Close()
-			body, err := ioutil.ReadAll(res.Body)
-
-			if res.StatusCode >= 300 { //nolint:gomnd
-				log.Printf("response status code is not 2xx. status code: %v body: %v. skip.\n", res.StatusCode, string(body))
-				break
-			}
-
-			if err != nil {
-				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read response body: %w", err)
-			}
-
-			err = json.Unmarshal(body, &wfInsight)
-			if err != nil {
-				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to parse response body. body %v, err %w", string(body), err)
-			}
-
-			wfInsightWithRepo := WorkflowInsightWithRepo{repo: repo, branch: branch, WorkflowInsight: wfInsight}
-			wfInsightWithRepos = append(wfInsightWithRepos, wfInsightWithRepo)
 		}
 	}
 	return wfInsightWithRepos, nil
