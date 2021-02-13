@@ -218,13 +218,19 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 
 			defer res.Body.Close()
 			body, err := ioutil.ReadAll(res.Body)
+
+			if res.StatusCode >= 300 { //nolint:gomnd
+				log.Printf("response status code is not 2xx. status code: %v body: %v. skip.\n", res.StatusCode, string(body))
+				break
+			}
+
 			if err != nil {
 				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read response body: %w", err)
 			}
 
 			err = json.Unmarshal(body, &wfInsight)
 			if err != nil {
-				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to parse response body: %w", err)
+				return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to parse response body. body %v, err %w", string(body), err)
 			}
 
 			wfInsightWithRepo := WorkflowInsightWithRepo{repo: repo, branch: branch, WorkflowInsight: wfInsight}
