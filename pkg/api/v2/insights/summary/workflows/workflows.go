@@ -1,4 +1,4 @@
-package v2_workflow_insights
+package workflows
 
 import (
 	"context"

@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	v2_workflow_insights "github.com/chaspy/circleci-insight-prometheus-exporter/pkg/V2WorkflowInsights"
-	v2_workflow_jobs_insights "github.com/chaspy/circleci-insight-prometheus-exporter/pkg/V2WorkflowJobsInsights"
+	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/api/v2/insights/summary/jobs"
+	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/api/v2/insights/summary/workflows"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -20,8 +20,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	v2_workflow_insights.Register()
-	v2_workflow_jobs_insights.Register()
+	workflows.Register()
+	jobs.Register()
 
 	http.Handle("/metrics", promhttp.Handler())
 
@@ -40,12 +40,12 @@ func main() {
 }
 
 func snapshot() error {
-	workflowsWithRepo, err := v2_workflow_insights.Export()
+	workflowsWithRepo, err := workflows.Export()
 	if err != nil {
 		return fmt.Errorf("failed to export workflow insights metrics: %w", err)
 	}
 
-	err = v2_workflow_jobs_insights.Export(workflowsWithRepo)
+	err = jobs.Export(workflowsWithRepo)
 	if err != nil {
 		return fmt.Errorf("failed to export job insights metrics: %w", err)
 	}

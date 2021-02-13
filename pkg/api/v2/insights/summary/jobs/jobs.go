@@ -1,4 +1,4 @@
-package v2_workflow_jobs_insights
+package jobs
 
 import (
 	"context"
@@ -9,10 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	v2_workflow_insights "github.com/chaspy/circleci-insight-prometheus-exporter/pkg/V2WorkflowInsights"
-
+	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/api/v2/insights/summary/workflows"
 	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/config"
-
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -109,7 +107,7 @@ func Register() {
 	prometheus.MustRegister(jobDurationMetricsStandardDeviation)
 }
 
-func Export(workflowWithRepos []v2_workflow_insights.WorkflowWithRepo) error {
+func Export(workflowWithRepos []workflows.WorkflowWithRepo) error {
 	jobSuccessRate.Reset()
 	jobDurationMetricsMin.Reset()
 	jobDurationMetricsMax.Reset()
@@ -142,7 +140,7 @@ func Export(workflowWithRepos []v2_workflow_insights.WorkflowWithRepo) error {
 	return nil
 }
 
-func getV2WorkflowJobsInsights(workflowWithRepos []v2_workflow_insights.WorkflowWithRepo) ([]WorkflowJobsInsightWithRepo, error) {
+func getV2WorkflowJobsInsights(workflowWithRepos []workflows.WorkflowWithRepo) ([]WorkflowJobsInsightWithRepo, error) {
 	var wfJobsInsight WorkflowJobsInsight
 	var wfJobsInsightWithRepos []WorkflowJobsInsightWithRepo
 	var pageToken string
