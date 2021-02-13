@@ -33,6 +33,21 @@ $ docker run chaspy/circleci-insight-prometheus-exporter:v0.1.0
 
 These metrics are from [getProjectWorkflowRuns API](https://circleci.com/docs/api/v2/#operation/getProjectWorkflowRuns)
 
+These metrics have "workflow", "repo" and "branch" tags.
+
+### Get summary metrics for a project workflow's jobs.
+
+* circleci_custom_job_insight_success_rate
+* circleci_custom_job_insight_duration_metrics_min
+* circleci_custom_job_insight_duration_metrics_max
+* circleci_custom_job_insight_duration_metrics_median
+* circleci_custom_job_insight_duration_metrics_p95
+* circleci_custom_job_insight_duration_metrics_standard_deviation
+
+These metrics are from [getProjectWorkflowJobMetrics](https://circleci.com/docs/api/v2/#operation/getProjectWorkflowJobMetrics)
+
+These metrics have "job", "workflow", "repo" and "branch" tags.
+
 ## Environment Variable
 
 |name                 |required|default |description|
