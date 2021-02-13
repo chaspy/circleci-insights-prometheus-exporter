@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+//nolint:gochecknoglobals
 var (
 	wfSuccessRate = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
