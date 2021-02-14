@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/config"
+	"github.com/chaspy/circleci-insights-prometheus-exporter/pkg/config"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -17,7 +17,7 @@ import (
 var (
 	wfSuccessRate = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "workflow_insight",
+		Subsystem: "workflow_insights",
 		Name:      "success_rate",
 		Help:      "success rate of workflow",
 	},
@@ -25,7 +25,7 @@ var (
 	)
 	wfDurationMetricsMin = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "workflow_insight",
+		Subsystem: "workflow_insights",
 		Name:      "duration_metrics_min",
 		Help:      "minimum duration metrics",
 	},
@@ -33,7 +33,7 @@ var (
 	)
 	wfDurationMetricsMax = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "workflow_insight",
+		Subsystem: "workflow_insights",
 		Name:      "duration_metrics_max",
 		Help:      "maximum duration metrics",
 	},
@@ -41,7 +41,7 @@ var (
 	)
 	wfDurationMetricsMedian = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "workflow_insight",
+		Subsystem: "workflow_insights",
 		Name:      "duration_metrics_median",
 		Help:      "median of duration metrics",
 	},
@@ -49,7 +49,7 @@ var (
 	)
 	wfDurationMetricsP95 = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "workflow_insight",
+		Subsystem: "workflow_insights",
 		Name:      "duration_metrics_p95",
 		Help:      "95 percentile of duration metrics",
 	},
@@ -57,7 +57,7 @@ var (
 	)
 	wfDurationMetricsStandardDeviation = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "workflow_insight",
+		Subsystem: "workflow_insights",
 		Name:      "duration_metrics_standard_deviation",
 		Help:      "standard deviation of duration metrics",
 	},

@@ -1,4 +1,4 @@
-# circleci-insight-prometheus-exporter
+# circleci-insights-prometheus-exporter
 
 Prometheus Exporter for [CircleCI Insight API](https://circleci.com/docs/api/v2/#tag/Insights)
 
@@ -12,24 +12,24 @@ $ go run main.go
 
 ### Binary
 
-Get the binary file from [Releases](https://github.com/chaspy/circleci-insight-prometheus-exporter/releases) and run it.
+Get the binary file from [Releases](https://github.com/chaspy/circleci-insights-prometheus-exporter/releases) and run it.
 
 ### Docker
 
 ```
-$ docker run chaspy/circleci-insight-prometheus-exporter:v0.1.0
+$ docker run chaspy/circleci-insights-prometheus-exporter:v0.1.0
 ```
 
 ## Metrics
 
 ### Get summary metrics for a project's workflows
 
-* circleci_custom_workflow_insight_success_rate
-* circleci_custom_workflow_insight_duration_metrics_min
-* circleci_custom_workflow_insight_duration_metrics_max
-* circleci_custom_workflow_insight_duration_metrics_median
-* circleci_custom_workflow_insight_duration_metrics_p95
-* circleci_custom_workflow_insight_duration_metrics_standard_deviation
+* circleci_custom_workflow_insights_success_rate
+* circleci_custom_workflow_insights_duration_metrics_min
+* circleci_custom_workflow_insights_duration_metrics_max
+* circleci_custom_workflow_insights_duration_metrics_median
+* circleci_custom_workflow_insights_duration_metrics_p95
+* circleci_custom_workflow_insights_duration_metrics_standard_deviation
 
 These metrics are from [getProjectWorkflowRuns API](https://circleci.com/docs/api/v2/#operation/getProjectWorkflowRuns)
 
@@ -37,12 +37,12 @@ These metrics have "workflow", "repo" and "branch" tags.
 
 ### Get summary metrics for a project workflow's jobs.
 
-* circleci_custom_job_insight_success_rate
-* circleci_custom_job_insight_duration_metrics_min
-* circleci_custom_job_insight_duration_metrics_max
-* circleci_custom_job_insight_duration_metrics_median
-* circleci_custom_job_insight_duration_metrics_p95
-* circleci_custom_job_insight_duration_metrics_standard_deviation
+* circleci_custom_job_insights_success_rate
+* circleci_custom_job_insights_duration_metrics_min
+* circleci_custom_job_insights_duration_metrics_max
+* circleci_custom_job_insights_duration_metrics_median
+* circleci_custom_job_insights_duration_metrics_p95
+* circleci_custom_job_insights_duration_metrics_standard_deviation
 
 These metrics are from [getProjectWorkflowJobMetrics](https://circleci.com/docs/api/v2/#operation/getProjectWorkflowJobMetrics)
 
