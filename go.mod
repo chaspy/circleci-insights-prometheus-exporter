@@ -1,4 +1,4 @@
-module github.com/chaspy/circleci-insight-prometheus-exporter
+module github.com/chaspy/circleci-insights-prometheus-exporter
 
 go 1.15
 

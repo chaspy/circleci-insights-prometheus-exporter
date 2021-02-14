@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/api/v2/insights/summary/jobs"
-	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/api/v2/insights/summary/workflows"
+	"github.com/chaspy/circleci-insights-prometheus-exporter/pkg/api/v2/insights/summary/jobs"
+	"github.com/chaspy/circleci-insights-prometheus-exporter/pkg/api/v2/insights/summary/workflows"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 

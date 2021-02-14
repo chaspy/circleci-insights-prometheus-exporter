@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/api/v2/insights/summary/workflows"
-	"github.com/chaspy/circleci-insight-prometheus-exporter/pkg/config"
+	"github.com/chaspy/circleci-insights-prometheus-exporter/pkg/api/v2/insights/summary/workflows"
+	"github.com/chaspy/circleci-insights-prometheus-exporter/pkg/config"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -18,7 +18,7 @@ import (
 var (
 	jobSuccessRate = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "job_insight",
+		Subsystem: "job_insights",
 		Name:      "success_rate",
 		Help:      "success rate of workflow",
 	},
@@ -26,7 +26,7 @@ var (
 	)
 	jobDurationMetricsMin = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "job_insight",
+		Subsystem: "job_insights",
 		Name:      "duration_metrics_min",
 		Help:      "minimum duration metrics",
 	},
@@ -34,7 +34,7 @@ var (
 	)
 	jobDurationMetricsMax = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "job_insight",
+		Subsystem: "job_insights",
 		Name:      "duration_metrics_max",
 		Help:      "maximum duration metrics",
 	},
@@ -42,7 +42,7 @@ var (
 	)
 	jobDurationMetricsMedian = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "job_insight",
+		Subsystem: "job_insights",
 		Name:      "duration_metrics_median",
 		Help:      "median of duration metrics",
 	},
@@ -50,7 +50,7 @@ var (
 	)
 	jobDurationMetricsP95 = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "job_insight",
+		Subsystem: "job_insights",
 		Name:      "duration_metrics_p95",
 		Help:      "95 percentile of duration metrics",
 	},
@@ -58,7 +58,7 @@ var (
 	)
 	jobDurationMetricsStandardDeviation = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
-		Subsystem: "job_insight",
+		Subsystem: "job_insights",
 		Name:      "duration_metrics_standard_deviation",
 		Help:      "standard deviation of duration metrics",
 	},

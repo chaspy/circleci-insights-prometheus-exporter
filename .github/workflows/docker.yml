@@ -15,7 +15,7 @@ jobs:
         name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=chaspy/circleci-insight-prometheus-exporter
+          DOCKER_IMAGE=chaspy/circleci-insights-prometheus-exporter
           VERSION=edge
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
@@ -48,5 +48,5 @@ jobs:
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
-          cache-from: type=registry,ref=chaspy/circleci-insight-prometheus-exporter:latest
+          cache-from: type=registry,ref=chaspy/circleci-insights-prometheus-exporter:latest
           cache-to: type=inline
