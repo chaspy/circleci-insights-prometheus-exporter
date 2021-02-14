@@ -17,7 +17,7 @@ Get the binary file from [Releases](https://github.com/chaspy/circleci-insights-
 ### Docker
 
 ```
-$ docker run chaspy/circleci-insights-prometheus-exporter:v0.1.0
+$ docker run chaspy/circleci-insights-prometheus-exporter:v0.3.0
 ```
 
 ## Metrics
