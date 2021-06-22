@@ -15,6 +15,30 @@ import (
 
 //nolint:gochecknoglobals
 var (
+	wfTotalRuns = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insights",
+		Name:      "total_runs",
+		Help:      "The total number of runs",
+	},
+		[]string{"workflow", "repo", "branch"},
+	)
+	wfSuccessfulRuns = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insights",
+		Name:      "successful_runs",
+		Help:      "The number of successful runs",
+	},
+		[]string{"workflow", "repo", "branch"},
+	)
+	wfFailedRuns = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insights",
+		Name:      "failed_runs",
+		Help:      "The number of failed runs",
+	},
+		[]string{"workflow", "repo", "branch"},
+	)
 	wfSuccessRate = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "circleci_custom",
 		Subsystem: "workflow_insights",
@@ -63,6 +87,14 @@ var (
 	},
 		[]string{"workflow", "repo", "branch"},
 	)
+	wfThroughput = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "circleci_custom",
+		Subsystem: "workflow_insights",
+		Name:      "throughput",
+		Help:      "The average number of runs per day",
+	},
+		[]string{"workflow", "repo", "branch"},
+	)
 )
 
 type WorkflowWithRepo struct {
@@ -104,7 +136,11 @@ type WorkflowInsight struct {
 }
 
 func Register() {
+	prometheus.MustRegister(wfTotalRuns)
+	prometheus.MustRegister(wfSuccessfulRuns)
+	prometheus.MustRegister(wfFailedRuns)
 	prometheus.MustRegister(wfSuccessRate)
+	prometheus.MustRegister(wfThroughput)
 	prometheus.MustRegister(wfDurationMetricsMin)
 	prometheus.MustRegister(wfDurationMetricsMax)
 	prometheus.MustRegister(wfDurationMetricsMedian)
@@ -115,7 +151,11 @@ func Register() {
 func Export() ([]WorkflowWithRepo, error) {
 	var workflowWithRepos []WorkflowWithRepo
 
+	wfTotalRuns.Reset()
+	wfSuccessfulRuns.Reset()
+	wfFailedRuns.Reset()
 	wfSuccessRate.Reset()
+	wfThroughput.Reset()
 	wfDurationMetricsMin.Reset()
 	wfDurationMetricsMax.Reset()
 	wfDurationMetricsMedian.Reset()
@@ -145,7 +185,11 @@ func Export() ([]WorkflowWithRepo, error) {
 				"repo":     wfInsightWithRepo.repo,
 				"branch":   wfInsightWithRepo.branch,
 			}
+			wfTotalRuns.With(labels).Set(float64(wfInsight.Metrics.TotalRuns))
+			wfSuccessfulRuns.With(labels).Set(float64(wfInsight.Metrics.SuccessfulRuns))
+			wfFailedRuns.With(labels).Set(float64(wfInsight.Metrics.FailedRuns))
 			wfSuccessRate.With(labels).Set(wfInsight.Metrics.SuccessRate)
+			wfThroughput.With(labels).Set(wfInsight.Metrics.Throughput)
 			wfDurationMetricsMin.With(labels).Set(float64(wfInsight.Metrics.DurationMetrics.Min))
 			wfDurationMetricsMax.With(labels).Set(float64(wfInsight.Metrics.DurationMetrics.Max))
 			wfDurationMetricsMedian.With(labels).Set(float64(wfInsight.Metrics.DurationMetrics.Median))

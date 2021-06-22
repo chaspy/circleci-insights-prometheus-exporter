@@ -23,8 +23,11 @@ $ docker run chaspy/circleci-insights-prometheus-exporter:v0.3.0
 ## Metrics
 
 ### Get summary metrics for a project's workflows
-
+* circleci_custom_workflow_insights_total_runs
+* circleci_custom_workflow_insights_successful_runs
+* circleci_custom_workflow_insights_failed_runs
 * circleci_custom_workflow_insights_success_rate
+* circleci_custom_workflow_insights_throughput
 * circleci_custom_workflow_insights_duration_metrics_min
 * circleci_custom_workflow_insights_duration_metrics_max
 * circleci_custom_workflow_insights_duration_metrics_median
