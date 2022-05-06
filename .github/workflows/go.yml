@@ -23,8 +23,10 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - name: install lint
-      run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.35.2
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: v1.45.2
 
     - name: lint
       run: golangci-lint run
