@@ -201,25 +201,34 @@ func Export() ([]WorkflowWithRepo, error) {
 	return workflowWithRepos, nil
 }
 
+func getConfig() (string, []string, []string, string, error) {
+	reportingWindow := config.GetReportingWindow()
+	repos, err := config.GetGitHubRepos()
+	if err != nil {
+		return "", []string{}, []string{}, "", fmt.Errorf("failed to read GitHub repository: %w", err)
+	}
+
+	branches, err := config.GetGitHubBranches()
+	if err != nil {
+		return "", []string{}, []string{}, "", fmt.Errorf("failed to read GitHub branch: %w", err)
+	}
+
+	circleCIToken, err := config.GetCircleCIToken()
+	if err != nil {
+		log.Fatal("failed to read Datadog Config: %w", err)
+	}
+
+	return reportingWindow, repos, branches, circleCIToken, nil
+}
+
 func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 	var wfInsight WorkflowInsight
 	var wfInsightWithRepos []WorkflowInsightWithRepo
 	var pageToken string
 
-	reportingWindow := config.GetReportingWindow()
-	repos, err := config.GetGitHubRepos()
+	reportingWindow, repos, branches, circleCIToken, err := getConfig()
 	if err != nil {
-		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read GitHub repository: %w", err)
-	}
-
-	branches, err := config.GetGitHubBranches()
-	if err != nil {
-		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read GitHub branch: %w", err)
-	}
-
-	getCircleCIToken, err := config.GetCircleCIToken()
-	if err != nil {
-		log.Fatal("failed to read Datadog Config: %w", err)
+		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to get config %w", err)
 	}
 
 	for _, repo := range repos {
@@ -230,7 +239,7 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 				ctx := context.Background()
 				req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 
-				req.Header.Add("Circle-Token", getCircleCIToken)
+				req.Header.Add("Circle-Token", circleCIToken)
 
 				body, status, err := getV2WorkflowInsightsAPI(req)
 				if status >= 300 { //nolint:gomnd
