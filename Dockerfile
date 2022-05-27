@@ -1,4 +1,4 @@
-FROM golang:1.17.2 as builder
+FROM golang:1.18.1 as builder
 
 WORKDIR /go/src
 
@@ -14,7 +14,7 @@ RUN go build \
     -o /go/bin/circleci-insights-prometheus-exporter \
     -ldflags '-s -w'
 
-FROM alpine:3.14.2 as runner
+FROM alpine:3.15.4 as runner
 
 COPY --from=builder /go/bin/circleci-insights-prometheus-exporter /app/circleci-insights-prometheus-exporter
 
