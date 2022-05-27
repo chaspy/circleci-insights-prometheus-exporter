@@ -57,12 +57,8 @@ These metrics have "job", "workflow", "repo" and "branch" tags.
 |---------------------|--------|--------|-----------|
 |CIRCLECI_TOKEN       |yes     |-       |[CircleCI API Token](https://app.circleci.com/settings/user/tokens)|
 |CIRCLECI_API_INTERVAL|no      |300(sec)|Interval second for calling the API|
-|GITHUB_REPOSITORY    |no      |-       |Comma-separated repository names. i.e. "chaspy/chaspy.me,chaspy/dotfiles"|
-|GITHUB_BRANCH        |no      |-       |Comma-separated branch names. i.e. "master,develop"|
-|BITBUCKET_REPOSITORY |no      |-       |Comma-separated repository names. i.e. "chaspy/chaspy.me,chaspy/dotfiles"|
-|BITBUCKET_BRANCH     |no      |-       |Comma-separated branch names. i.e. "master,develop"|
-
-Use either BITBUCKET_* or GITHUB_* pair of environment variables, exclusively. Setting the pair will define which repository provider should be used.
+|GITHUB_REPOSITORY    |yes     |-       |Comma-separated repository names. i.e. "chaspy/chaspy.me,chaspy/dotfiles"|
+|GITHUB_BRANCH        |yes     |-       |Comma-separated branch names. i.e. "master,develop"|
 
 ## Datadog Autodiscovery
 
