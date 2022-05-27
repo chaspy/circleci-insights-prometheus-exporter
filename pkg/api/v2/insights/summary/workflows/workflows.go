@@ -207,21 +207,25 @@ func getV2WorkflowInsights() ([]WorkflowInsightWithRepo, error) {
 	var pageToken string
 
 	reportingWindow := config.GetReportingWindow()
-
-	repos, branches, git_provider, err := config.GetRepositoryConfig()
+	repos, err := config.GetGitHubRepos()
 	if err != nil {
-		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read configuration: %w", err)
+		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read GitHub repository: %w", err)
+	}
+
+	branches, err := config.GetGitHubBranches()
+	if err != nil {
+		return []WorkflowInsightWithRepo{}, fmt.Errorf("failed to read GitHub branch: %w", err)
 	}
 
 	getCircleCIToken, err := config.GetCircleCIToken()
 	if err != nil {
-		log.Fatal("failed to read CircleCI token: %w", err)
+		log.Fatal("failed to read Datadog Config: %w", err)
 	}
 
 	for _, repo := range repos {
 		for _, branch := range branches {
 			for {
-				url := "https://circleci.com/api/v2/insights/" + git_provider + "/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWindow + "&page-token" + pageToken
+				url := "https://circleci.com/api/v2/insights/gh/" + repo + "/workflows?" + "&branch=" + branch + "&reporting-window=" + reportingWindow + "&page-token" + pageToken
 
 				ctx := context.Background()
 				req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
