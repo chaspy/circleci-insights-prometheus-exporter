@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cci-reader
+  namespace: circleci-exporter
+data:
+  Organization: aetna-digital-infrastructure
+  Repositories: |-
+    DSSP-Developer-Portal,
+    dfp-gitops-package-ccloud-definitions,
+    rally-service
+  TZ: 'America/New_York'
+  ENDPOINT: 'metrics'
