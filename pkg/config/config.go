@@ -15,22 +15,27 @@ func GetCircleCIToken() (string, error) {
 	return circleciToken, nil
 }
 
-func GetGitHubRepos() ([]string, error) {
-	githubRepos := os.Getenv("GITHUB_REPOSITORY")
-	if len(githubRepos) == 0 {
-		return []string{}, fmt.Errorf("missing environment variable GITHUB_REPOSITORY")
+func GetConfigForName(config_name string) ([]string, []string) {
+	if len(os.Getenv(config_name+"_REPOSITORY")) > 0 && len(os.Getenv(config_name+"_BRANCH")) > 0 {
+		return strings.Split(os.Getenv(config_name+"_REPOSITORY"), ","), strings.Split(os.Getenv(config_name+"_BRANCH"), ",")
 	}
-	ret := strings.Split(githubRepos, ",")
-	return ret, nil
+	return []string{}, []string{}
 }
 
-func GetGitHubBranches() ([]string, error) {
-	githubBranches := os.Getenv("GITHUB_BRANCH")
-	if len(githubBranches) == 0 {
-		return []string{}, fmt.Errorf("missing environment variable GITHUB_BRANCH")
+func GetRepositoryConfig() ([]string, []string, string, error) {
+
+	repos, branches := GetConfigForName("GITHUB")
+	if len(repos) > 0 && len(branches) > 0 {
+		return repos, branches, "gh", nil
 	}
-	ret := strings.Split(githubBranches, ",")
-	return ret, nil
+
+	repos, branches = GetConfigForName("BITBUCKET")
+	if len(repos) > 0 && len(branches) > 0 {
+		return repos, branches, "bb", nil
+	}
+
+	return []string{}, []string{}, "", fmt.Errorf("Missing environment variables. " +
+		"Define either GITHUB_REPOSITORY and GITHUB_BRANCH, or BITBUCKET_REPOSITORY and BITBUCKET_BRANCH")
 }
 
 // reporting window expect the followings:
