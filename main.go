@@ -24,15 +24,27 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	go func() {
-		ticker := time.NewTicker(time.Duration(interval) * time.Second)
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
 
-		// register metrics as background
-		for range ticker.C {
+	ticker := time.NewTicker(time.Duration(interval) * time.Second)
+	defer ticker.Stop()
+
+	go func() {
+		for {
+			// If you wish to keep the "old" way of count time and then work - replace "continue" down below with the function run
 			err := snapshot()
 			if err != nil {
 				log.Fatal(err)
 			}
+
+			select {
+				case <-ticker.C:
+					continue
+				case <-interrupt:
+					ticker.Stop()
+					return
+				}
 		}
 	}()
 	log.Fatal(http.ListenAndServe(":8080", nil))
