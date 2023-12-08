@@ -14,7 +14,7 @@ RUN go build \
     -o /go/bin/circleci-insights-prometheus-exporter \
     -ldflags '-s -w'
 
-FROM alpine:3.15.4 as runner
+FROM alpine:3.19.0 as runner
 
 COPY --from=builder /go/bin/circleci-insights-prometheus-exporter /app/circleci-insights-prometheus-exporter
 
