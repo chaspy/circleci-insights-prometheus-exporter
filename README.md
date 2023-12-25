@@ -1,3 +1,5 @@
+# Archived
+
 # circleci-insights-prometheus-exporter
 
 Prometheus Exporter for [CircleCI Insight API](https://circleci.com/docs/api/v2/#tag/Insights)
